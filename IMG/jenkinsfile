@@ -2,7 +2,6 @@ pipeline {
     agent any
     
     environment {
-        // Define environment variables if needed
         JAVA_HOME = "/path/to/your/java/home"
         MAVEN_HOME = "/path/to/your/maven/home"
     }
@@ -11,7 +10,9 @@ pipeline {
         stage('Build') {
             steps {
                 // Checkout source code from Git repository
-                git 'https://github.com/Divinepj/Automating-Deployment-of-an-E-Commerce-Website.git'
+                checkout([$class: 'GitSCM', 
+                          branches: [[name: '*/main']], 
+                          userRemoteConfigs: [[url: 'https://github.com/Divinepj/Automating-Deployment-of-an-E-Commerce-Website.git']]])
                 
                 // Set up Java and Maven
                 tool 'OracleJDK11'
@@ -30,3 +31,4 @@ pipeline {
         }
     }
 }
+
