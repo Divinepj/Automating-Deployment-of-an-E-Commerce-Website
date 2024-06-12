@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        // Set environment variables
+        // Set environment variable
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
         DOCKERHUB_REPO = 'your-dockerhub-username/your-repo-name'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
