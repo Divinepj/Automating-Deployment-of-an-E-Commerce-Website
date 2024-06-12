@@ -1,34 +1,48 @@
 pipeline {
     agent any
-    
+
     environment {
-        JAVA_HOME = "/path/to/your/java/home"
-        MAVEN_HOME = "/path/to/your/maven/home"
+        // Set environment variables
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+        DOCKERHUB_REPO = 'your-dockerhub-username/your-repo-name'
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
     }
-    
+
     stages {
         stage('Build') {
             steps {
-                // Checkout source code from Git repository
-                checkout([$class: 'GitSCM', 
-                          branches: [[name: '*/main']], 
-                          userRemoteConfigs: [[url: 'https://github.com/Divinepj/Automating-Deployment-of-an-E-Commerce-Website.git']]])
-                
-                // Set up Java and Maven
-                tool 'OracleJDK11'
-                tool 'Maven3'
-                
-                // Build the web application
-                sh 'mvn clean install'
+                script {
+                    // Checkout the source code
+                    checkout scm
+
+                    // Build the Docker image
+                    sh 'docker build -t ${DOCKERHUB_REPO}:${IMAGE_TAG} .'
+                }
             }
         }
-        
-        stage('Deploy') {
+
+        stage('Push') {
             steps {
-                // Deploy the web application (example: copy to deployment directory)
-                sh 'cp target/yourwebapp.war /path/to/deployment/directory'
+                script {
+                    // Log in to DockerHub
+                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+
+                    // Push the Docker image
+                    sh 'docker push ${DOCKERHUB_REPO}:${IMAGE_TAG}'
+
+                    // Optionally, tag the image as 'latest' and push
+                    sh 'docker tag ${DOCKERHUB_REPO}:${IMAGE_TAG} ${DOCKERHUB_REPO}:latest'
+                    sh 'docker push ${DOCKERHUB_REPO}:latest'
+                }
             }
         }
     }
-}
 
+    post {
+        always {
+            // Clean up Docker images
+            sh 'docker rmi ${DOCKERHUB_REPO}:${IMAGE_TAG} || true'
+            sh 'docker rmi ${DOCKERHUB_REPO}:latest || true'
+        }
+    }
+}
