@@ -1,4 +1,52 @@
 pipeline {
+        agent any
+
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub')  // Jenkins credentials ID for Docker Hub
+        DOCKERHUB_REPO = 'adebayo2007'    // Replace with your Docker Hub repository name
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
+    }
+    stages {
+        stage('Build') {
+            steps {
+                script {
+                    // Replace this with your actual build commands
+                    echo 'Building Docker image...'
+                    sh "docker build -t ${DOCKERHUB_REPO}:${IMAGE_TAG} ."
+                //
+            }
+        }
+        stage('Push') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub) {
+                        def dockerImage = docker.image("${DOCKERHUB_REPO}:${IMAGE_TAG}")
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Clean up Docker images
+            sh "docker rmi ${DOCKERHUB_REPO}:${IMAGE_TAG} || true"
+            sh "docker rmi ${DOCKERHUB_REPO}:latest || true"
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+/* pipeline {
     agent any
 
     environment {
@@ -38,3 +86,4 @@ pipeline {
         }
     }
 }
+ */

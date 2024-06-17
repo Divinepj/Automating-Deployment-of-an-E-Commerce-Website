@@ -1,2 +1,6 @@
 # Automating-Deployment-of-an-E-Commerce-Website
 Automating Deployment of  an E-Commerce Website
+this project seeks to automate the process of deployment of an e-commerce website using tools like Jenkins and Dockerhub.
+we start by setting up a terminal and installing jenkins and its dependencies as shown below ![alt text](./IMG/Snipaste_2024-06-09_13-37-21.png) we then proceed to log in to jenkins by inputing the password as shown below ![alt text](./IMG/Snipaste_2024-06-09_13-47-18.png) we also procced to install the necessary plugins ![alt text](./IMG/Snipaste_2024-06-09_13-47-40.png) and ![alt text](./IMG/Snipaste_2024-06-12_20-11-57.png)
+We also proceed to create an admin user as show below ![alt text](./IMG/Snipaste_2024-06-09_13-49-24.png) we also procced to set up the webhook on the repository by going to the settings tab on github and configure the webhook as shown below ![alt text](./IMG/Snipaste_2024-06-09_13-53-47.png)![alt text](./IMG/Snipaste_2024-06-09_13-54-50.png) 
+On the jenkins portal we proceed to create our first freestyle project 
